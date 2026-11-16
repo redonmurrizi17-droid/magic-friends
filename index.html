@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+
+<html lang="sq">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="theme-color" content="#17112f">
+
+<title>Magic Friends</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+
+margin:0;
+
+background:linear-gradient(145deg,#17112f,#34205b);
+
+color:white;
+
+font-family:Arial,sans-serif;
+
+text-align:center
+
+}
+
+header{padding:25px 12px}
+
+h1{font-size:34px;color:#ffe28a}
+
+main{max-width:600px;margin:auto;padding:15px}
+
+.card{
+
+background:#ffffff16;
+
+border:1px solid #ffffff35;
+
+border-radius:22px;
+
+padding:20px;
+
+margin:15px 0
+
+}
+
+.characters{font-size:55px}
+
+button{
+
+background:#ffcf65;
+
+color:#26153f;
+
+border:0;
+
+border-radius:13px;
+
+padding:14px;
+
+margin:7px;
+
+font-size:16px;
+
+font-weight:bold
+
+}
+
+input,select{
+
+width:90%;
+
+padding:13px;
+
+border-radius:10px;
+
+margin:8px;
+
+border:0;
+
+font-size:16px
+
+}
+
+#story{white-space:pre-wrap;line-height:1.7;text-align:left}
+
+#scene{font-size:65px;padding:20px}
+
+small{color:#d6c9ef}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>✨ MAGIC FRIENDS ✨</h1>
+
+<p>Bota magjike e aventurave!</p>
+
+<div class="characters">🐻 🦊 🐰 🐼</div>
+
+</header>
+
+<main>
+
+<div class="card">
+
+<h2>🎬 Krijo historinë tënde</h2>
+
+<input id="name" placeholder="Emri i personazhit">
+
+<select id="theme">
+
+<option value="pyll">Pylli magjik</option>
+
+<option value="hapësirë">Aventura në hapësirë</option>
+
+<option value="det">Mbretëria nën det</option>
+
+<option value="kështjellë">Kështjella magjike</option>
+
+</select>
+
+<button onclick="createStory()">✨ Krijo histori</button>
+
+<div id="scene">🌈</div>
+
+<div id="story">Historia jote do të shfaqet këtu...</div>
+
+</div>
+
+<div class="card">
+
+<h2>🎤 Zërat dhe dialogët</h2>
+
+<button onclick="speak()">🔊 Lexo historinë</button>
+
+<button onclick="stopVoice()">⏹ Ndalo</button>
+
+</div>
+
+<div class="card">
+
+<h2>🎵 Muzika</h2>
+
+<button onclick="music()">▶ Ndez muzikën</button>
+
+<button onclick="stopMusic()">⏹ Fik muzikën</button>
+
+</div>
+
+<div class="card">
+
+<h2>🎥 Krijo video</h2>
+
+<p>Video të synuara nga 1 deri në 4 minuta.</p>
+
+<p>Gjenerimi i videos reale 3D do të kërkojë lidhjen e një shërbimi AI.</p>
+
+<button onclick="downloadStory()">⬇ Shkarko historinë</button>
+
+</div>
+
+<p><small>Magic Friends © 2026</small></p>
+
+</main>
+
+<script>
+
+let currentStory="";
+
+let audioContext=null;
+
+let oscillator=null;
+
+function createStory(){
+
+let n=document.getElementById("name").value.trim()||"Miku";
+
+let t=document.getElementById("theme").value;
+
+let stories={
+
+pyll:`${n} hyri në pyllin magjik. Atje takoi një ari të vogël që dinte të fluturonte. Së bashku gjetën një yll të humbur dhe e kthyen në qiell. Kafshët festuan me muzikë dhe vallëzim. Fundi ishte plot lumturi!`,
+
+hapësirë:`${n} udhëtoi me një raketë drejt yjeve. Në një planet të largët takoi miq të rinj. Ata zbuluan një kristal magjik dhe shpëtuan gjithë galaktikën.`,
+
+det:`${n} zbuloi mbretërinë nën det. Një delfin miqësor i tregoi një kështjellë të fshehur. Aty gjetën perlën magjike që i ktheu ngjyrat oqeanit.`,
+
+"kështjellë":`${n} zbuloi një kështjellë magjike. Një dragua i vogël kishte humbur rrugën për në shtëpi. Së bashku kaluan ura dhe male dhe gjetën familjen e tij.`
+
+};
+
+currentStory=stories[t];
+
+document.getElementById("story").textContent=currentStory;
+
+document.getElementById("scene").textContent=
+
+t==="pyll"?"🌳🐻":
+
+t==="hapësirë"?"🚀🌟":
+
+t==="det"?"🐬🌊":"🏰🐉";
+
+}
+
+function speak(){
+
+if(!currentStory){
+
+alert("Krijo fillimisht një histori!");
+
+return;
+
+}
+
+stopVoice();
+
+let u=new SpeechSynthesisUtterance(currentStory);
+
+u.lang="sq-AL";
+
+u.rate=0.9;
+
+speechSynthesis.speak(u);
+
+}
+
+function stopVoice(){
+
+speechSynthesis.cancel();
+
+}
+
+function music(){
+
+try{
+
+audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+
+if(audioContext.state==="suspended")audioContext.resume();
+
+stopMusic();
+
+oscillator=audioContext.createOscillator();
+
+let gain=audioContext.createGain();
+
+oscillator.type="sine";
+
+oscillator.frequency.value=440;
+
+gain.gain.value=0.035;
+
+oscillator.connect(gain);
+
+gain.connect(audioContext.destination);
+
+oscillator.start();
+
+}catch(e){
+
+alert("Audio nuk mund të aktivizohet.");
+
+}
+
+}
+
+function stopMusic(){
+
+if(oscillator){
+
+try{oscillator.stop();}catch(e){}
+
+oscillator=null;
+
+}
+
+}
+
+function downloadStory(){
+
+if(!currentStory){
+
+alert("Krijo fillimisht një histori!");
+
+return;
+
+}
+
+let blob=new Blob([currentStory],{type:"text/plain;charset=utf-8"});
+
+let url=URL.createObjectURL(blob);
+
+let a=document.createElement("a");
+
+a.href=url;
+
+a.download="magic-friends-historia.txt";
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+
+</script>
+
+</body>
+
+</html>
