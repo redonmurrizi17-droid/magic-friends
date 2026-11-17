@@ -36,7 +36,7 @@ header{padding:25px 12px}
 
 h1{font-size:34px;color:#ffe28a}
 
-main{max-width:600px;margin:auto;padding:15px}
+main{max-width:650px;margin:auto;padding:15px}
 
 .card{
 
@@ -70,9 +70,13 @@ margin:7px;
 
 font-size:16px;
 
-font-weight:bold
+font-weight:bold;
+
+cursor:pointer
 
 }
+
+button:disabled{opacity:.5}
 
 input,select{
 
@@ -90,11 +94,113 @@ font-size:16px
 
 }
 
-#story{white-space:pre-wrap;line-height:1.7;text-align:left}
+.animal-option{
+
+background:#ffffff16;
+
+border-radius:14px;
+
+padding:10px;
+
+margin:9px 0;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:5px
+
+}
+
+.animal-option label{
+
+font-size:17px;
+
+text-align:left;
+
+flex:1
+
+}
+
+.animal-option input[type=checkbox]{
+
+width:23px;
+
+height:23px;
+
+margin:5px
+
+}
+
+.animal-option input[type=text]{
+
+width:48%;
+
+margin:3px;
+
+padding:10px
+
+}
+
+#story{
+
+white-space:pre-wrap;
+
+line-height:1.7;
+
+text-align:left
+
+}
 
 #scene{font-size:65px;padding:20px}
 
 small{color:#d6c9ef}
+
+#videoPreview{
+
+width:100%;
+
+border-radius:15px;
+
+margin-top:15px;
+
+background:black
+
+}
+
+#downloadVideo{
+
+display:none;
+
+text-decoration:none;
+
+background:#ffcf65;
+
+color:#26153f;
+
+padding:14px;
+
+border-radius:12px;
+
+font-weight:bold;
+
+margin:12px auto;
+
+display:none
+
+}
+
+#videoStatus{
+
+color:#ffe28a;
+
+line-height:1.6;
+
+margin:12px
+
+}
 
 </style>
 
@@ -118,19 +224,81 @@ small{color:#d6c9ef}
 
 <h2>🎬 Krijo historinë tënde</h2>
 
-<input id="name" placeholder="Emri i personazhit">
+<input id="name" placeholder="Emri i personazhit kryesor">
+
+<h3>🌈 Zgjidh kategorinë</h3>
 
 <select id="theme">
 
-<option value="pyll">Pylli magjik</option>
+<option value="pyll">🌳 Pylli magjik</option>
 
-<option value="hapësirë">Aventura në hapësirë</option>
+<option value="hapësirë">🚀 Aventura në hapësirë</option>
 
-<option value="det">Mbretëria nën det</option>
+<option value="det">🌊 Mbretëria nën det</option>
 
-<option value="kështjellë">Kështjella magjike</option>
+<option value="kështjellë">🏰 Kështjella magjike</option>
+
+<option value="dino">🦕 Bota e dinosaurëve</option>
 
 </select>
+
+<h3>🐾 Zgjidh personazhet dhe emrat</h3>
+
+<div class="animal-option">
+
+<label>
+
+<input type="checkbox" class="animal-check" value="bear" checked>
+
+🐻 Ariu
+
+</label>
+
+<input id="bearName" value="Beni" placeholder="Emri">
+
+</div>
+
+<div class="animal-option">
+
+<label>
+
+<input type="checkbox" class="animal-check" value="fox" checked>
+
+🦊 Dhelpra
+
+</label>
+
+<input id="foxName" value="Foksi" placeholder="Emri">
+
+</div>
+
+<div class="animal-option">
+
+<label>
+
+<input type="checkbox" class="animal-check" value="rabbit" checked>
+
+🐰 Lepuri
+
+</label>
+
+<input id="rabbitName" value="Bubi" placeholder="Emri">
+
+</div>
+
+<div class="animal-option">
+
+<label>
+
+<input type="checkbox" class="animal-check" value="panda" checked>
+
+🐼 Panda
+
+</label>
+
+<input id="pandaName" value="Pandi" placeholder="Emri">
+
+</div>
 
 <button onclick="createStory()">✨ Krijo histori</button>
 
@@ -162,13 +330,41 @@ small{color:#d6c9ef}
 
 <div class="card">
 
-<h2>🎥 Krijo video</h2>
+<h2>🎥 KRIJO VIDEON</h2>
 
-<p>Video të synuara nga 1 deri në 4 minuta.</p>
+<p>Zgjidh kohëzgjatjen e videos:</p>
 
-<p>Gjenerimi i videos reale 3D do të kërkojë lidhjen e një shërbimi AI.</p>
+<select id="videoDuration">
 
-<button onclick="downloadStory()">⬇ Shkarko historinë</button>
+<option value="1">1 minutë</option>
+
+<option value="2">2 minuta</option>
+
+<option value="3">3 minuta</option>
+
+<option value="4">4 minuta</option>
+
+</select>
+
+<p>🎬 Animacion me personazhet dhe historinë tënde.</p>
+
+<p><small>Videoja lokale krijohet në formatin që mbështet shfletuesi. Për animacion 3D me AI duhet lidhur shërbimi përkatës.</small></p>
+
+<button id="createVideoButton" onclick="createVideo()">
+
+🎬 KRIJO VIDEO
+
+</button>
+
+<p id="videoStatus">Gati për të krijuar aventurën!</p>
+
+<video id="videoPreview" controls playsinline style="display:none"></video>
+
+<a id="downloadVideo" download="magic-friends-video.webm">
+
+⬇ SHKARKO VIDEON
+
+</a>
 
 </div>
 
@@ -180,39 +376,105 @@ small{color:#d6c9ef}
 
 let currentStory="";
 
+let currentCharacters=[];
+
 let audioContext=null;
 
 let oscillator=null;
 
-function createStory(){
+let musicGain=null;
 
-let n=document.getElementById("name").value.trim()||"Miku";
+const animalData={
 
-let t=document.getElementById("theme").value;
+bear:{emoji:"🐻",input:"bearName"},
 
-let stories={
+fox:{emoji:"🦊",input:"foxName"},
 
-pyll:`${n} hyri në pyllin magjik. Atje takoi një ari të vogël që dinte të fluturonte. Së bashku gjetën një yll të humbur dhe e kthyen në qiell. Kafshët festuan me muzikë dhe vallëzim. Fundi ishte plot lumturi!`,
+rabbit:{emoji:"🐰",input:"rabbitName"},
 
-hapësirë:`${n} udhëtoi me një raketë drejt yjeve. Në një planet të largët takoi miq të rinj. Ata zbuluan një kristal magjik dhe shpëtuan gjithë galaktikën.`,
-
-det:`${n} zbuloi mbretërinë nën det. Një delfin miqësor i tregoi një kështjellë të fshehur. Aty gjetën perlën magjike që i ktheu ngjyrat oqeanit.`,
-
-"kështjellë":`${n} zbuloi një kështjellë magjike. Një dragua i vogël kishte humbur rrugën për në shtëpi. Së bashku kaluan ura dhe male dhe gjetën familjen e tij.`
+panda:{emoji:"🐼",input:"pandaName"}
 
 };
 
-currentStory=stories[t];
+function getSelectedAnimals(){
+
+return [...document.querySelectorAll(".animal-check:checked")]
+
+.map(check=>{
+
+const animal=animalData[check.value];
+
+return {
+
+emoji:animal.emoji,
+
+name:document.getElementById(animal.input).value.trim()
+
+|| "Miku"
+
+};
+
+});
+
+}
+
+function createStory(){
+
+let hero=document.getElementById("name").value.trim()||"Miku";
+
+let theme=document.getElementById("theme").value;
+
+currentCharacters=getSelectedAnimals();
+
+if(!currentCharacters.length){
+
+alert("Zgjidh të paktën një personazh!");
+
+return;
+
+}
+
+let names=currentCharacters.map(a=>a.name).join(", ");
+
+let stories={
+
+pyll:
+
+`${hero} dhe miqtë e tij ${names} hynë në një pyll magjik. Atje zbuluan një hartë të fshehtë. Së bashku kaluan lumenj, ura dhe pemë gjigante. Papritur gjetën një yll që kishte rënë nga qielli. Miqtë bashkuan forcat dhe e ndihmuan të kthehej në shtëpi. Pylli u mbush me drita dhe muzikë. Të gjithë festuan miqësinë e tyre!`,
+
+hapësirë:
+
+`${hero} dhe miqtë ${names} u nisën me një raketë drejt hapësirës. Ata zbuluan një planet me ngjyra të mrekullueshme. Atje takuan krijesa miqësore. Por një yll kishte humbur dritën. Miqtë bashkuan forcat dhe gjetën kristalin magjik që e ndriçoi përsëri galaktikën. Të gjithë u kthyen në shtëpi si heronj!`,
+
+det:
+
+`${hero} dhe miqtë ${names} zbuluan një mbretëri nën det. Një delfin i vogël i ftoi të vizitonin kështjellën e tij. Atje zbuluan një perlë magjike që ishte zhdukur. Ata eksploruan shpellat dhe gjetën thesarin. Oqeani u mbush përsëri me ngjyra. Të gjithë festuan nën det!`,
+
+"kështjellë":
+
+`${hero} dhe miqtë ${names} zbuluan një kështjellë magjike. Një dragua i vogël kishte humbur familjen. Miqtë vendosën ta ndihmonin. Ata kaluan male, ura dhe pyje. Pas shumë aventurash gjetën familjen e dragoit. Kështjella u mbush me gëzim dhe festa!`,
+
+dino:
+
+`${hero} dhe miqtë ${names} udhëtuan në botën e dinosaurëve. Ata takuan një dinosaur të vogël që kërkonte familjen e tij. Së bashku kaluan një lumë dhe një pyll të madh. Më në fund gjetën familjen e dinosaurit. Të gjithë u bënë miq dhe festuan në luginën magjike!`
+
+};
+
+currentStory=stories[theme];
 
 document.getElementById("story").textContent=currentStory;
 
 document.getElementById("scene").textContent=
 
-t==="pyll"?"🌳🐻":
+currentCharacters.map(a=>a.emoji).join(" ");
 
-t==="hapësirë"?"🚀🌟":
+document.getElementById("videoStatus").textContent=
 
-t==="det"?"🐬🌊":"🏰🐉";
+"Historia u krijua! Tani mund të krijosh videon.";
+
+document.getElementById("videoPreview").style.display="none";
+
+document.getElementById("downloadVideo").style.display="none";
 
 }
 
@@ -248,25 +510,31 @@ function music(){
 
 try{
 
-audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+audioContext=audioContext||
 
-if(audioContext.state==="suspended")audioContext.resume();
+new(window.AudioContext||window.webkitAudioContext)();
+
+if(audioContext.state==="suspended"){
+
+audioContext.resume();
+
+}
 
 stopMusic();
 
 oscillator=audioContext.createOscillator();
 
-let gain=audioContext.createGain();
+musicGain=audioContext.createGain();
 
 oscillator.type="sine";
 
 oscillator.frequency.value=440;
 
-gain.gain.value=0.035;
+musicGain.gain.value=0.035;
 
-oscillator.connect(gain);
+oscillator.connect(musicGain);
 
-gain.connect(audioContext.destination);
+musicGain.connect(audioContext.destination);
 
 oscillator.start();
 
@@ -300,7 +568,11 @@ return;
 
 }
 
-let blob=new Blob([currentStory],{type:"text/plain;charset=utf-8"});
+let blob=new Blob([currentStory],{
+
+type:"text/plain;charset=utf-8"
+
+});
 
 let url=URL.createObjectURL(blob);
 
@@ -313,6 +585,400 @@ a.download="magic-friends-historia.txt";
 a.click();
 
 URL.revokeObjectURL(url);
+
+}
+
+// VIDEO ANIMACIONI
+
+function drawText(ctx,text,x,y,maxWidth,lineHeight,maxLines){
+
+let words=text.split(" ");
+
+let line="";
+
+let lines=[];
+
+ 
+
+for(let word of words){
+
+let test=line+word+" ";
+
+if(ctx.measureText(test).width>maxWidth&&line){
+
+lines.push(line);
+
+line=word+" ";
+
+}else{
+
+line=test;
+
+}
+
+}
+
+if(line)lines.push(line);
+
+lines.slice(0,maxLines).forEach((l,i)=>{
+
+ctx.fillText(l,x,y+i*lineHeight);
+
+});
+
+}
+
+async function createVideo(){
+
+if(!currentStory){
+
+alert("Krijo fillimisht një histori!");
+
+return;
+
+}
+
+if(!window.MediaRecorder||
+
+!HTMLCanvasElement.prototype.captureStream){
+
+alert("Shfletuesi nuk e mbështet krijimin e videos. Provo një version më të ri të Safari.");
+
+return;
+
+}
+
+const button=document.getElementById("createVideoButton");
+
+const status=document.getElementById("videoStatus");
+
+const duration=Number(document.getElementById("videoDuration").value)*60*1000;
+
+button.disabled=true;
+
+status.textContent="Po përgatitet videoja...";
+
+const canvas=document.createElement("canvas");
+
+canvas.width=1280;
+
+canvas.height=720;
+
+const ctx=canvas.getContext("2d");
+
+const scenes=currentStory.split(/(?<=[.!?])\s+/).filter(Boolean);
+
+const stream=canvas.captureStream(24);
+
+let audioCtx=null;
+
+let melodyTimer=null;
+
+let audioDestination=null;
+
+try{
+
+audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+
+await audioCtx.resume();
+
+audioDestination=audioCtx.createMediaStreamDestination();
+
+const notes=[261.63,329.63,392,329.63,293.66,349.23];
+
+let noteIndex=0;
+
+function playNote(){
+
+const osc=audioCtx.createOscillator();
+
+const gain=audioCtx.createGain();
+
+osc.type="sine";
+
+osc.frequency.value=notes[noteIndex%notes.length];
+
+gain.gain.setValueAtTime(0.0001,audioCtx.currentTime);
+
+gain.gain.exponentialRampToValueAtTime(0.025,audioCtx.currentTime+0.04);
+
+gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.5);
+
+osc.connect(gain);
+
+gain.connect(audioDestination);
+
+osc.start();
+
+osc.stop(audioCtx.currentTime+0.55);
+
+noteIndex++;
+
+}
+
+playNote();
+
+melodyTimer=setInterval(playNote,600);
+
+audioDestination.stream.getAudioTracks().forEach(track=>{
+
+stream.addTrack(track);
+
+});
+
+}catch(e){
+
+console.log("Video pa muzikë:",e);
+
+}
+
+let types=[
+
+"video/mp4",
+
+"video/webm;codecs=vp9",
+
+"video/webm;codecs=vp8",
+
+"video/webm"
+
+];
+
+let mimeType=types.find(t=>MediaRecorder.isTypeSupported(t));
+
+let recorder;
+
+try{
+
+recorder=new MediaRecorder(
+
+stream,
+
+mimeType?{mimeType}:undefined
+
+);
+
+}catch(e){
+
+button.disabled=false;
+
+status.textContent="Nuk mund të nisë regjistrimi në këtë shfletues.";
+
+stream.getTracks().forEach(t=>t.stop());
+
+if(audioCtx)audioCtx.close();
+
+return;
+
+}
+
+let chunks=[];
+
+recorder.ondataavailable=e=>{
+
+if(e.data&&e.data.size>0){
+
+chunks.push(e.data);
+
+}
+
+};
+
+recorder.onstop=()=>{
+
+const type=recorder.mimeType||"video/webm";
+
+const blob=new Blob(chunks,{type});
+
+const url=URL.createObjectURL(blob);
+
+const video=document.getElementById("videoPreview");
+
+const download=document.getElementById("downloadVideo");
+
+video.src=url;
+
+video.style.display="block";
+
+let extension=type.includes("mp4")?"mp4":"webm";
+
+download.href=url;
+
+download.download="magic-friends-video."+extension;
+
+download.style.display="inline-block";
+
+status.textContent="🎉 Videoja u krijua! Mund ta shikosh dhe ta shkarkosh.";
+
+button.disabled=false;
+
+stream.getTracks().forEach(t=>t.stop());
+
+if(melodyTimer)clearInterval(melodyTimer);
+
+if(audioCtx)audioCtx.close();
+
+};
+
+recorder.onerror=()=>{
+
+status.textContent="Ndodhi një gabim gjatë krijimit të videos.";
+
+button.disabled=false;
+
+};
+
+recorder.start(1000);
+
+let start=performance.now();
+
+function render(now){
+
+let elapsed=now-start;
+
+let progress=Math.min(elapsed/duration,1);
+
+let sceneIndex=Math.min(
+
+Math.floor(progress*scenes.length),
+
+scenes.length-1
+
+);
+
+let gradient=ctx.createLinearGradient(0,0,1280,720);
+
+gradient.addColorStop(0,"#17112f");
+
+gradient.addColorStop(1,"#6945a0");
+
+ctx.fillStyle=gradient;
+
+ctx.fillRect(0,0,1280,720);
+
+// YJET
+
+for(let i=0;i<45;i++){
+
+let x=(i*173)%1280;
+
+let y=(i*97)%720;
+
+ctx.fillStyle="#ffffff";
+
+ctx.globalAlpha=0.3+(Math.sin(elapsed/500+i)*0.3);
+
+ctx.beginPath();
+
+ctx.arc(x,y,3,0,Math.PI*2);
+
+ctx.fill();
+
+}
+
+ctx.globalAlpha=1;
+
+// TITULLI
+
+ctx.fillStyle="#ffe28a";
+
+ctx.font="bold 55px Arial";
+
+ctx.textAlign="center";
+
+ctx.fillText("✨ MAGIC FRIENDS ✨",640,105);
+
+// PERSONAZHET
+
+let emojiList=currentCharacters.map(a=>a.emoji);
+
+ctx.font="100px Arial";
+
+let spacing=150;
+
+let startX=640-(emojiList.length-1)*spacing/2;
+
+emojiList.forEach((emoji,i)=>{
+
+let bounce=Math.sin(elapsed/350+i)*15;
+
+ctx.fillText(emoji,startX+i*spacing,300+bounce);
+
+});
+
+// HISTORIA
+
+ctx.fillStyle="#ffffff";
+
+ctx.font="bold 37px Arial";
+
+drawText(
+
+ctx,
+
+scenes[sceneIndex],
+
+640,
+
+410,
+
+1050,
+
+55,
+
+4
+
+);
+
+// NUMRI I SKENËS
+
+ctx.fillStyle="#ffe28a";
+
+ctx.font="25px Arial";
+
+ctx.fillText(
+
+"Skena "+(sceneIndex+1)+" / "+scenes.length,
+
+640,
+
+665
+
+);
+
+// PROGRESI
+
+ctx.fillStyle="#ffffff44";
+
+ctx.fillRect(90,690,1100,12);
+
+ctx.fillStyle="#ffcf65";
+
+ctx.fillRect(90,690,1100*progress,12);
+
+let remaining=Math.ceil((duration-elapsed)/1000);
+
+status.textContent=
+
+"🎬 Po krijohet videoja... "+
+
+Math.floor(progress*100)+"% — "+
+
+remaining+" sekonda të mbetura.";
+
+if(elapsed<duration&&recorder.state==="recording"){
+
+requestAnimationFrame(render);
+
+}else if(recorder.state==="recording"){
+
+recorder.stop();
+
+}
+
+}
+
+requestAnimationFrame(render);
 
 }
 
