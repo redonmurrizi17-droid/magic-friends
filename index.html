@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 
 <html lang="sq">
@@ -18,19 +16,7 @@
 
 *{box-sizing:border-box}
 
-body{
-
- margin:0;
-
- background:linear-gradient(145deg,#17112f,#34205b);
-
- color:white;
-
- font-family:Arial,sans-serif;
-
- text-align:center
-
-}
+body{margin:0;background:linear-gradient(145deg,#17112f,#34205b);color:white;font-family:Arial,sans-serif;text-align:center}
 
 header{padding:25px 12px}
 
@@ -38,173 +24,41 @@ h1{font-size:34px;color:#ffe28a}
 
 main{max-width:650px;margin:auto;padding:15px}
 
-.card{
-
- background:#ffffff16;
-
- border:1px solid #ffffff35;
-
- border-radius:22px;
-
- padding:20px;
-
- margin:15px 0
-
-}
+.card{background:#ffffff16;border:1px solid #ffffff35;border-radius:22px;padding:20px;margin:15px 0}
 
 .characters{font-size:55px}
 
-button{
-
- background:#ffcf65;
-
- color:#26153f;
-
- border:0;
-
- border-radius:13px;
-
- padding:14px;
-
- margin:7px;
-
- font-size:16px;
-
- font-weight:bold;
-
- cursor:pointer
-
-}
+button{background:#ffcf65;color:#26153f;border:0;border-radius:13px;padding:14px;margin:7px;font-size:16px;font-weight:bold;cursor:pointer}
 
 button:disabled{opacity:.5}
 
-input,select{
+input,select{width:90%;padding:13px;border-radius:10px;margin:8px;border:0;font-size:16px}
 
- width:90%;
+.animal-option{background:#ffffff16;border-radius:14px;padding:10px;margin:9px 0;display:flex;align-items:center;justify-content:space-between;gap:5px}
 
- padding:13px;
+.animal-option label{font-size:17px;text-align:left;flex:1}
 
- border-radius:10px;
+.animal-option input[type=checkbox]{width:23px;height:23px;margin:5px}
 
- margin:8px;
+.animal-option input[type=text]{width:48%;margin:3px;padding:10px}
 
- border:0;
-
- font-size:16px
-
-}
-
-.animal-option{
-
- background:#ffffff16;
-
- border-radius:14px;
-
- padding:10px;
-
- margin:9px 0;
-
- display:flex;
-
- align-items:center;
-
- justify-content:space-between;
-
- gap:5px
-
-}
-
-.animal-option label{
-
- font-size:17px;
-
- text-align:left;
-
- flex:1
-
-}
-
-.animal-option input[type=checkbox]{
-
- width:23px;height:23px;margin:5px
-
-}
-
-.animal-option input[type=text]{
-
- width:48%;margin:3px;padding:10px
-
-}
-
-#story{
-
- white-space:pre-wrap;
-
- line-height:1.7;
-
- text-align:left
-
-}
+#story{white-space:pre-wrap;line-height:1.7;text-align:left}
 
 #scene{font-size:65px;padding:20px}
 
 small{color:#d6c9ef}
 
-#videoPreview{
+#videoPreview{width:100%;border-radius:15px;margin-top:15px;background:black}
 
- width:100%;
+#downloadVideo{display:none;text-decoration:none;background:#ffcf65;color:#26153f;padding:14px;border-radius:12px;font-weight:bold;margin:12px auto}
 
- border-radius:15px;
+#videoStatus{color:#ffe28a;line-height:1.6;margin:12px}
 
- margin-top:15px;
+.hint{background:#ffffff12;border-radius:12px;padding:12px;line-height:1.6;font-size:14px}
 
- background:black
+#threeStage{width:100%;aspect-ratio:16/9;display:none;background:#101026;border-radius:15px;overflow:hidden;margin-top:14px}
 
-}
-
-#downloadVideo{
-
- display:none;
-
- text-decoration:none;
-
- background:#ffcf65;
-
- color:#26153f;
-
- padding:14px;
-
- border-radius:12px;
-
- font-weight:bold;
-
- margin:12px auto
-
-}
-
-#videoStatus{
-
- color:#ffe28a;
-
- line-height:1.6;
-
- margin:12px
-
-}
-
-.hint{
-
- background:#ffffff12;
-
- border-radius:12px;
-
- padding:12px;
-
- line-height:1.6;
-
- font-size:14px
-
-}
+#threeStage canvas{width:100%;height:100%;display:block}
 
 </style>
 
@@ -248,37 +102,13 @@ small{color:#d6c9ef}
 
 <h3>🐾 Zgjidh personazhet dhe emrat</h3>
 
-<div class="animal-option">
+<div class="animal-option"><label><input type="checkbox" class="animal-check" value="bear" checked> 🐻 Ariu</label><input id="bearName" value="Beni" placeholder="Emri"></div>
 
-<label><input type="checkbox" class="animal-check" value="bear" checked> 🐻 Ariu</label>
+<div class="animal-option"><label><input type="checkbox" class="animal-check" value="fox" checked> 🦊 Dhelpra</label><input id="foxName" value="Foksi" placeholder="Emri"></div>
 
-<input id="bearName" value="Beni" placeholder="Emri">
+<div class="animal-option"><label><input type="checkbox" class="animal-check" value="rabbit" checked> 🐰 Lepuri</label><input id="rabbitName" value="Bubi" placeholder="Emri"></div>
 
-</div>
-
-<div class="animal-option">
-
-<label><input type="checkbox" class="animal-check" value="fox" checked> 🦊 Dhelpra</label>
-
-<input id="foxName" value="Foksi" placeholder="Emri">
-
-</div>
-
-<div class="animal-option">
-
-<label><input type="checkbox" class="animal-check" value="rabbit" checked> 🐰 Lepuri</label>
-
-<input id="rabbitName" value="Bubi" placeholder="Emri">
-
-</div>
-
-<div class="animal-option">
-
-<label><input type="checkbox" class="animal-check" value="panda" checked> 🐼 Panda</label>
-
-<input id="pandaName" value="Pandi" placeholder="Emri">
-
-</div>
+<div class="animal-option"><label><input type="checkbox" class="animal-check" value="panda" checked> 🐼 Panda</label><input id="pandaName" value="Pandi" placeholder="Emri"></div>
 
 <button onclick="createStory()">✨ Krijo histori</button>
 
@@ -328,29 +158,17 @@ small{color:#d6c9ef}
 
 <p>🐻 🦊 🐰 🐼</p>
 
-<div class="hint">
+<div class="hint">Personazhe 3D me ecje, kërcime, lojë dhe ndërveprim në botën magjike. Muzikë e butë në sfond.</div>
 
-Personazhe 3D, lëvizje, ecje, kërcime, lojë dhe ndërveprim në botën magjike.
-
-Muzikë e butë në sfond.
-
-</div>
-
-<button id="createVideoButton" onclick="createVideo()">
-
-🎬 KRIJO FILMIN 3D
-
-</button>
+<button id="createVideoButton" onclick="createVideo()">🎬 KRIJO FILMIN 3D</button>
 
 <p id="videoStatus">Gati për aventurën tënde!</p>
 
+<div id="threeStage"></div>
+
 <video id="videoPreview" controls playsinline style="display:none"></video>
 
-<a id="downloadVideo" download="magic-friends-3d.mp4">
-
-⬇ SHKARKO FILMIN
-
-</a>
+<a id="downloadVideo" download="magic-friends-3d.webm">⬇ SHKARKO FILMIN</a>
 
 </div>
 
@@ -358,316 +176,6 @@ Muzikë e butë në sfond.
 
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
-
-let currentStory="";
-
-let currentCharacters=[];
-
-let audioContext=null;
-
-let oscillator=null;
-
-let musicGain=null;
-
-const animalData={
-
- bear:{emoji:"🐻",input:"bearName",type:"cute 3D cartoon bear"},
-
- fox:{emoji:"🦊",input:"foxName",type:"cute 3D cartoon fox"},
-
- rabbit:{emoji:"🐰",input:"rabbitName",type:"cute 3D cartoon rabbit"},
-
- panda:{emoji:"🐼",input:"pandaName",type:"cute 3D cartoon panda"}
-
-};
-
-function getSelectedAnimals(){
-
- return [...document.querySelectorAll(".animal-check:checked")].map(check=>{
-
-  const animal=animalData[check.value];
-
-  return {
-
-   id:check.value,
-
-   emoji:animal.emoji,
-
-   type:animal.type,
-
-   name:document.getElementById(animal.input).value.trim()||"Miku"
-
-  };
-
- });
-
-}
-
-function createStory(){
-
- const hero=document.getElementById("name").value.trim()||"Miku";
-
- const theme=document.getElementById("theme").value;
-
- currentCharacters=getSelectedAnimals();
-
- if(!currentCharacters.length){
-
-  alert("Zgjidh të paktën një personazh!");
-
-  return;
-
- }
-
- const names=currentCharacters.map(a=>a.name).join(", ");
-
- const stories={
-
-  pyll:`${hero} dhe miqtë e tij ${names} hynë në një pyll magjik. Atje zbuluan një hartë të fshehtë. Së bashku kaluan lumenj, ura dhe pemë gjigante. Papritur gjetën një yll që kishte rënë nga qielli. Miqtë bashkuan forcat dhe e ndihmuan të kthehej në shtëpi. Pylli u mbush me drita dhe muzikë. Të gjithë festuan miqësinë e tyre!`,
-
-  "hapësirë":`${hero} dhe miqtë ${names} u nisën me një raketë drejt hapësirës. Ata zbuluan një planet me ngjyra të mrekullueshme. Atje takuan krijesa miqësore. Miqtë gjetën kristalin magjik që ndriçoi përsëri galaktikën. Të gjithë u kthyen në shtëpi si heronj!`,
-
-  det:`${hero} dhe miqtë ${names} zbuluan një mbretëri nën det. Një delfin i vogël i ftoi të vizitonin kështjellën e tij. Ata eksploruan shpellat dhe gjetën një perlë magjike. Oqeani u mbush përsëri me ngjyra!`,
-
-  "kështjellë":`${hero} dhe miqtë ${names} zbuluan një kështjellë magjike. Një dragua i vogël kishte humbur familjen. Miqtë vendosën ta ndihmonin. Pas shumë aventurash gjetën familjen e dragoit. Kështjella u mbush me gëzim!`,
-
-  dino:`${hero} dhe miqtë ${names} udhëtuan në botën e dinosaurëve. Ata takuan një dinosaur të vogël që kërkonte familjen e tij. Së bashku kaluan një lumë dhe një pyll të madh. Më në fund gjetën familjen e dinosaurit!`
-
- };
-
- currentStory=stories[theme];
-
- document.getElementById("story").textContent=currentStory;
-
- document.getElementById("scene").textContent=currentCharacters.map(a=>a.emoji).join(" ");
-
- document.getElementById("videoStatus").textContent="Historia u krijua! Tani mund të krijosh filmin 3D.";
-
- document.getElementById("videoPreview").style.display="none";
-
- document.getElementById("downloadVideo").style.display="none";
-
-}
-
-function speak(){
-
- if(!currentStory){
-
-  alert("Krijo fillimisht një histori!");
-
-  return;
-
- }
-
- stopVoice();
-
- const u=new SpeechSynthesisUtterance(currentStory);
-
- u.lang="sq-AL";
-
- u.rate=0.9;
-
- speechSynthesis.speak(u);
-
-}
-
-function stopVoice(){
-
- if("speechSynthesis" in window)speechSynthesis.cancel();
-
-}
-
-function music(){
-
- try{
-
-  audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
-
-  if(audioContext.state==="suspended")audioContext.resume();
-
-  stopMusic();
-
-  oscillator=audioContext.createOscillator();
-
-  musicGain=audioContext.createGain();
-
-  oscillator.type="sine";
-
-  oscillator.frequency.value=440;
-
-  musicGain.gain.value=0.025;
-
-  oscillator.connect(musicGain);
-
-  musicGain.connect(audioContext.destination);
-
-  oscillator.start();
-
- }catch(e){
-
-  alert("Audio nuk mund të aktivizohet.");
-
- }
-
-}
-
-function stopMusic(){
-
- if(oscillator){
-
-  try{oscillator.stop();}catch(e){}
-
-  oscillator=null;
-
- }
-
-}
-
-/*
-
- MOTOR I VIDEOS AI
-
- Ky aplikacion komunikon me serverin tonë.
-
- Serveri duhet të lidhet me një shërbim AI
-
- për të gjeneruar filmin e vërtetë 3D.
-
- Mos vendos çelësa API në këtë skedar publik.
-
-*/
-
-async function createVideo(){
-
- if(!currentStory){
-
-  alert("Krijo fillimisht një histori!");
-
-  return;
-
- }
-
- const button=document.getElementById("createVideoButton");
-
- const status=document.getElementById("videoStatus");
-
- const video=document.getElementById("videoPreview");
-
- const download=document.getElementById("downloadVideo");
-
- button.disabled=true;
-
- video.style.display="none";
-
- download.style.display="none";
-
- status.textContent="🎬 Po lidhemi me motorin AI për filmin 3D...";
-
- const requestData={
-
-  story:currentStory,
-
-  hero:document.getElementById("name").value.trim()||"Miku",
-
-  theme:document.getElementById("theme").value,
-
-  characters:currentCharacters,
-
-  duration:Number(document.getElementById("videoDuration").value),
-
-  style:"high quality 3D animated family cartoon movie",
-
-  animation:[
-
-   "characters walking naturally",
-
-   "animals running and jumping",
-
-   "characters playing together",
-
-   "facial expressions and blinking",
-
-   "natural body movement",
-
-   "characters interacting with each other",
-
-   "cinematic camera movement"
-
-  ],
-
-  music:{
-
-   style:"gentle cheerful children's background music",
-
-   enabled:true
-
-  }
-
- };
-
- try{
-
-  /*
-
-   Ky endpoint duhet krijuar në server.
-
-   Përndryshe kërkesa nuk mund të gjenerojë video.
-
-  */
-
-  const response=await fetch("/api/generate-video",{
-
-   method:"POST",
-
-   headers:{"Content-Type":"application/json"},
-
-   body:JSON.stringify(requestData)
-
-  });
-
-  if(!response.ok){
-
-   throw new Error("Serveri AI nuk është konfiguruar ende.");
-
-  }
-
-  const result=await response.json();
-
-  if(!result.videoUrl){
-
-   throw new Error("Serveri nuk ktheu adresën e videos.");
-
-  }
-
-  video.src=result.videoUrl;
-
-  video.style.display="block";
-
-  download.href=result.videoUrl;
-
-  download.style.display="inline-block";
-
-  status.textContent="🎉 Filmi yt 3D është gati!";
-
-  video.load();
-
- }catch(error){
-
-  status.textContent="⚙️ Motori AI 3D duhet lidhur me serverin. Kodi i aplikacionit është gati për këtë lidhje.";
-
-  console.error(error);
-
- }finally{
-
-  button.disabled=false;
-
- }
-
-}
-
-</script>
-
-</body>
-
-</html>
