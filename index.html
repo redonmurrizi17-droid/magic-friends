@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 
 <html lang="sq">
@@ -102,13 +104,37 @@ small{color:#d6c9ef}
 
 <h3>🐾 Zgjidh personazhet dhe emrat</h3>
 
-<div class="animal-option"><label><input type="checkbox" class="animal-check" value="bear" checked> 🐻 Ariu</label><input id="bearName" value="Beni" placeholder="Emri"></div>
+<div class="animal-option">
 
-<div class="animal-option"><label><input type="checkbox" class="animal-check" value="fox" checked> 🦊 Dhelpra</label><input id="foxName" value="Foksi" placeholder="Emri"></div>
+<label><input type="checkbox" class="animal-check" value="bear" checked> 🐻 Ariu</label>
 
-<div class="animal-option"><label><input type="checkbox" class="animal-check" value="rabbit" checked> 🐰 Lepuri</label><input id="rabbitName" value="Bubi" placeholder="Emri"></div>
+<input id="bearName" value="Beni" placeholder="Emri">
 
-<div class="animal-option"><label><input type="checkbox" class="animal-check" value="panda" checked> 🐼 Panda</label><input id="pandaName" value="Pandi" placeholder="Emri"></div>
+</div>
+
+<div class="animal-option">
+
+<label><input type="checkbox" class="animal-check" value="fox" checked> 🦊 Dhelpra</label>
+
+<input id="foxName" value="Foksi" placeholder="Emri">
+
+</div>
+
+<div class="animal-option">
+
+<label><input type="checkbox" class="animal-check" value="rabbit" checked> 🐰 Lepuri</label>
+
+<input id="rabbitName" value="Bubi" placeholder="Emri">
+
+</div>
+
+<div class="animal-option">
+
+<label><input type="checkbox" class="animal-check" value="panda" checked> 🐼 Panda</label>
+
+<input id="pandaName" value="Pandi" placeholder="Emri">
+
+</div>
 
 <button onclick="createStory()">✨ Krijo histori</button>
 
@@ -158,7 +184,11 @@ small{color:#d6c9ef}
 
 <p>🐻 🦊 🐰 🐼</p>
 
-<div class="hint">Personazhe 3D me ecje, kërcime, lojë dhe ndërveprim në botën magjike. Muzikë e butë në sfond.</div>
+<div class="hint">
+
+Personazhe 3D me ecje, kërcime, lojë dhe ndërveprim në botën magjike. Muzikë e butë në sfond.
+
+</div>
 
 <button id="createVideoButton" onclick="createVideo()">🎬 KRIJO FILMIN 3D</button>
 
@@ -179,3 +209,807 @@ small{color:#d6c9ef}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
+
+let currentStory="";
+
+let currentCharacters=[];
+
+let audioContext=null;
+
+let musicGain=null;
+
+let musicTimer=null;
+
+let activeRenderer=null;
+
+let activeScene=null;
+
+let activeCamera=null;
+
+let activeActors=[];
+
+let animationFrame=null;
+
+const animalData={
+
+ bear:{emoji:"🐻",input:"bearName"},
+
+ fox:{emoji:"🦊",input:"foxName"},
+
+ rabbit:{emoji:"🐰",input:"rabbitName"},
+
+ panda:{emoji:"🐼",input:"pandaName"}
+
+};
+
+function getSelectedAnimals(){
+
+ return [...document.querySelectorAll(".animal-check:checked")].map(check=>{
+
+  const a=animalData[check.value];
+
+  return {
+
+   id:check.value,
+
+   emoji:a.emoji,
+
+   name:document.getElementById(a.input).value.trim()||"Miku"
+
+  };
+
+ });
+
+}
+
+function createStory(){
+
+ const hero=document.getElementById("name").value.trim()||"Miku";
+
+ const theme=document.getElementById("theme").value;
+
+ currentCharacters=getSelectedAnimals();
+
+ if(!currentCharacters.length){
+
+  alert("Zgjidh të paktën një personazh!");
+
+  return;
+
+ }
+
+ const names=currentCharacters.map(a=>a.name).join(", ");
+
+ const stories={
+
+  pyll:`${hero} dhe miqtë e tij ${names} hynë në një pyll magjik. Atje zbuluan një hartë të fshehtë. Së bashku kaluan lumenj, ura dhe pemë gjigante. Papritur gjetën një yll që kishte rënë nga qielli. Miqtë bashkuan forcat dhe e ndihmuan të kthehej në shtëpi. Pylli u mbush me drita dhe muzikë. Të gjithë festuan miqësinë e tyre!`,
+
+  "hapësirë":`${hero} dhe miqtë ${names} u nisën me një raketë drejt hapësirës. Ata zbuluan një planet me ngjyra të mrekullueshme. Atje takuan krijesa miqësore. Miqtë gjetën kristalin magjik që ndriçoi përsëri galaktikën. Të gjithë u kthyen në shtëpi si heronj!`,
+
+  det:`${hero} dhe miqtë ${names} zbuluan një mbretëri nën det. Një delfin i vogël i ftoi të vizitonin kështjellën e tij. Ata eksploruan shpellat dhe gjetën një perlë magjike. Oqeani u mbush përsëri me ngjyra!`,
+
+  "kështjellë":`${hero} dhe miqtë ${names} zbuluan një kështjellë magjike. Një dragua i vogël kishte humbur familjen. Miqtë vendosën ta ndihmonin. Pas shumë aventurash gjetën familjen e dragoit. Kështjella u mbush me gëzim!`,
+
+  dino:`${hero} dhe miqtë ${names} udhëtuan në botën e dinosaurëve. Ata takuan një dinosaur të vogël që kërkonte familjen e tij. Së bashku kaluan një lumë dhe një pyll të madh. Më në fund gjetën familjen e dinosaurit!`
+
+ };
+
+ currentStory=stories[theme];
+
+ document.getElementById("story").textContent=currentStory;
+
+ document.getElementById("scene").textContent=currentCharacters.map(a=>a.emoji).join(" ");
+
+ document.getElementById("videoStatus").textContent="Historia u krijua! Tani mund të krijosh filmin 3D.";
+
+ document.getElementById("videoPreview").style.display="none";
+
+ document.getElementById("downloadVideo").style.display="none";
+
+}
+
+function speak(){
+
+ if(!currentStory){
+
+  alert("Krijo fillimisht një histori!");
+
+  return;
+
+ }
+
+ stopVoice();
+
+ const u=new SpeechSynthesisUtterance(currentStory);
+
+ u.lang="sq-AL";
+
+ u.rate=.9;
+
+ speechSynthesis.speak(u);
+
+}
+
+function stopVoice(){
+
+ if("speechSynthesis" in window)speechSynthesis.cancel();
+
+}
+
+function ensureAudio(){
+
+ audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+
+ if(audioContext.state==="suspended")audioContext.resume();
+
+ return audioContext;
+
+}
+
+function music(){
+
+ try{
+
+  startMusicLoop();
+
+ }catch(e){
+
+  alert("Audio nuk mund të aktivizohet në këtë pajisje.");
+
+ }
+
+}
+
+function startMusicLoop(){
+
+ const ctx=ensureAudio();
+
+ stopMusic();
+
+ musicGain=ctx.createGain();
+
+ musicGain.gain.value=.035;
+
+ musicGain.connect(ctx.destination);
+
+ const notes=[523.25,659.25,783.99,659.25,587.33,698.46,783.99,698.46];
+
+ let i=0;
+
+ musicTimer=setInterval(()=>{
+
+  if(!audioContext||!musicGain)return;
+
+  const osc=ctx.createOscillator();
+
+  const g=ctx.createGain();
+
+  osc.type="sine";
+
+  osc.frequency.value=notes[i++%notes.length];
+
+  g.gain.setValueAtTime(.0001,ctx.currentTime);
+
+  g.gain.exponentialRampToValueAtTime(.22,ctx.currentTime+.08);
+
+  g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.55);
+
+  osc.connect(g);
+
+  g.connect(musicGain);
+
+  osc.start();
+
+  osc.stop(ctx.currentTime+.58);
+
+ },600);
+
+}
+
+function stopMusic(){
+
+ if(musicTimer){
+
+  clearInterval(musicTimer);
+
+  musicTimer=null;
+
+ }
+
+ if(musicGain){
+
+  try{
+
+   musicGain.gain.setTargetAtTime(.0001,audioContext.currentTime,.05);
+
+   musicGain.disconnect();
+
+  }catch(e){}
+
+  musicGain=null;
+
+ }
+
+}
+
+function mat(color){
+
+ return new THREE.MeshStandardMaterial({color:color,roughness:.85});
+
+}
+
+function sphere(parent,x,y,z,sx,sy,sz,material){
+
+ const m=new THREE.Mesh(new THREE.SphereGeometry(1,20,16),material);
+
+ m.position.set(x,y,z);
+
+ m.scale.set(sx,sy,sz);
+
+ parent.add(m);
+
+ return m;
+
+}
+
+function limb(parent,x,y,z,radius,length,material){
+
+ const m=new THREE.Mesh(
+
+  new THREE.CylinderGeometry(radius,radius,length,12),
+
+  material
+
+ );
+
+ m.position.set(x,y,z);
+
+ parent.add(m);
+
+ return m;
+
+}
+
+function makeAnimal(id){
+
+ const root=new THREE.Group();
+
+ const parts={};
+
+ const colors={
+
+  bear:0x9b633d,
+
+  fox:0xd96b27,
+
+  rabbit:0xe9e3dc,
+
+  panda:0xf1f1f1
+
+ };
+
+ const dark=mat(id==="panda"?0x171717:(id==="fox"?0x9d3d1d:0x593a2b));
+
+ const fur=mat(colors[id]);
+
+ const cream=mat(id==="bear"?0xd8b58e:(id==="fox"?0xffdfb2:0xffffff));
+
+ sphere(root,0,.88,0,.48,.58,.34,fur);
+
+ sphere(root,0,1.62,0,.43,.42,.38,fur);
+
+ sphere(root,0,1.47,.31,.27,.19,.16,cream);
+
+ sphere(root,0,1.49,.45,.07,.055,.045,dark);
+
+ for(const side of [-1,1]){
+
+  if(id==="rabbit"){
+
+   const ear=sphere(root,side*.2,2.18,0,.12,.38,.11,fur);
+
+   ear.rotation.z=side*-.12;
+
+   parts["ear"+side]=ear;
+
+   sphere(root,side*.2,2.18,.085,.055,.27,.035,cream);
+
+  }else{
+
+   sphere(root,side*.29,1.94,0,.14,.15,.12,fur);
+
+   if(id==="fox"){
+
+    sphere(root,side*.29,2.02,.005,.075,.07,.07,dark);
+
+   }
+
+  }
+
+  sphere(root,side*.16,1.68,.32,.105,.13,.055,id==="panda"?dark:cream);
+
+  sphere(root,side*.16,1.69,.37,.045,.06,.025,mat(0x171717));
+
+  const arm=limb(root,side*.48,1.05,0,.12,.55,fur);
+
+  arm.rotation.z=side*.28;
+
+  parts["arm"+side]=arm;
+
+  const leg=limb(root,side*.23,.35,0,.15,.5,dark);
+
+  parts["leg"+side]=leg;
+
+ }
+
+ if(id==="fox"){
+
+  const tail=sphere(root,0,.8,-.48,.2,.2,.52,fur);
+
+  tail.rotation.x=-.25;
+
+  sphere(root,0,.88,-.92,.18,.18,.18,cream);
+
+ }
+
+ if(id==="bear"){
+
+  sphere(root,-.29,1.95,0,.16,.16,.14,fur);
+
+  sphere(root,.29,1.95,0,.16,.16,.14,fur);
+
+ }
+
+ if(id==="panda"){
+
+  sphere(root,-.29,1.94,.08,.16,.17,.11,dark);
+
+  sphere(root,.29,1.94,.08,.16,.17,.11,dark);
+
+ }
+
+ root.userData.parts=parts;
+
+ root.userData.kind=id;
+
+ return root;
+
+}
+
+function makeWorld(theme){
+
+ const scene=new THREE.Scene();
+
+ const bg={
+
+  pyll:0x8bc9e8,
+
+  "hapësirë":0x17133d,
+
+  det:0x087eaa,
+
+  "kështjellë":0x9c91ce,
+
+  dino:0x8acb9b
+
+ }[theme]||0x8bc9e8;
+
+ scene.background=new THREE.Color(bg);
+
+ scene.fog=new THREE.Fog(bg,15,38);
+
+ const camera=new THREE.PerspectiveCamera(45,16/9,.1,100);
+
+ camera.position.set(0,5.2,11);
+
+ camera.lookAt(0,1,0);
+
+ const hemi=new THREE.HemisphereLight(0xffffff,0x695080,2);
+
+ scene.add(hemi);
+
+ const sun=new THREE.DirectionalLight(0xffffff,2.2);
+
+ sun.position.set(-4,9,6);
+
+ scene.add(sun);
+
+ const groundColor=theme==="det"?0x16a7bd:(theme==="hapësirë"?0x34305f:0x5caa58);
+
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80),mat(groundColor));
+
+ ground.rotation.x=-Math.PI/2;
+
+ ground.position.y=-.02;
+
+ scene.add(ground);
+
+ if(theme==="pyll"||theme==="dino"){
+
+  for(let i=0;i<15;i++){
+
+   const x=(Math.random()-.5)*24;
+
+   const z=-3-Math.random()*15;
+
+   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.23,1.8,8),mat(0x70452d));
+
+   trunk.position.set(x,.9,z);
+
+   scene.add(trunk);
+
+   const crown=new THREE.Mesh(new THREE.SphereGeometry(.85,12,10),mat(i%2?0x2f8c4e:0x48a85b));
+
+   crown.position.set(x,2.05,z);
+
+   scene.add(crown);
+
+  }
+
+ }else if(theme==="hapësirë"){
+
+  for(let i=0;i<65;i++){
+
+   sphere(scene,(Math.random()-.5)*28,Math.random()*12+2,-Math.random()*20,.045,.045,.045,mat(0xffffff));
+
+  }
+
+  sphere(scene,-5,4,-9,2,2,2,mat(0xa47ce0));
+
+ }else if(theme==="det"){
+
+  for(let i=0;i<18;i++){
+
+   sphere(scene,(Math.random()-.5)*16,Math.random()*5+1,-2-Math.random()*10,.08,.08,.08,mat(0xb8f5ff));
+
+  }
+
+  for(let i=0;i<9;i++){
+
+   const coral=new THREE.Mesh(new THREE.ConeGeometry(.22,1.3,7),mat(i%2?0xff8e8e:0xffc65e));
+
+   coral.position.set((i-4)*1.5,.65,-3);
+
+   scene.add(coral);
+
+  }
+
+ }else{
+
+  const castleMat=mat(0xe2d7f5);
+
+  for(let i=-1;i<=1;i++){
+
+   const tower=new THREE.Mesh(new THREE.CylinderGeometry(.45,.55,3,8),castleMat);
+
+   tower.position.set(i*2,1.5,-6);
+
+   scene.add(tower);
+
+   const roof=new THREE.Mesh(new THREE.ConeGeometry(.65,1.2,8),mat(0x8c5db7));
+
+   roof.position.set(i*2,3.6,-6);
+
+   scene.add(roof);
+
+  }
+
+ }
+
+ return {scene,camera};
+
+}
+
+function build3D(){
+
+ if(!window.THREE){
+
+  throw new Error("Biblioteka 3D nuk u ngarkua. Kontrollo internetin.");
+
+ }
+
+ const theme=document.getElementById("theme").value;
+
+ const {scene,camera}=makeWorld(theme);
+
+ const stage=document.getElementById("threeStage");
+
+ stage.innerHTML="";
+
+ stage.style.display="block";
+
+ const renderer=new THREE.WebGLRenderer({
+
+  antialias:true,
+
+  preserveDrawingBuffer:true
+
+ });
+
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+
+ renderer.setSize(960,540,false);
+
+ renderer.outputEncoding=THREE.sRGBEncoding;
+
+ stage.appendChild(renderer.domElement);
+
+ const actors=[];
+
+ currentCharacters.forEach((ch,i)=>{
+
+  const animal=makeAnimal(ch.id);
+
+  animal.position.x=(i-(currentCharacters.length-1)/2)*2.25;
+
+  scene.add(animal);
+
+  actors.push({group:animal,offset:i*1.7,name:ch.name});
+
+ });
+
+ activeRenderer=renderer;
+
+ activeScene=scene;
+
+ activeCamera=camera;
+
+ activeActors=actors;
+
+ return renderer;
+
+}
+
+function draw3DFrame(time){
+
+ if(!activeRenderer)return;
+
+ activeActors.forEach((a,i)=>{
+
+  const t=time/1000+a.offset;
+
+  const p=a.group.userData.parts;
+
+  a.group.position.x=(i-(activeActors.length-1)/2)*2.25+Math.sin(t*.7)*.45;
+
+  a.group.position.y=Math.abs(Math.sin(t*3.2))*.34;
+
+  a.group.rotation.y=Math.sin(t*.8)*.28;
+
+  Object.keys(p).forEach(k=>{
+
+   if(k.startsWith("arm")){
+
+    p[k].rotation.z=(k==="arm-1"?.28:-.28)+Math.sin(t*4+(k==="arm-1"?0:Math.PI))*.65;
+
+   }
+
+   if(k.startsWith("leg")){
+
+    p[k].rotation.x=Math.sin(t*4+(k==="leg-1"?0:Math.PI))*.55;
+
+   }
+
+   if(k.startsWith("ear")){
+
+    p[k].rotation.z=(k==="ear-1"?-.12:.12)+Math.sin(t*3)*.12;
+
+   }
+
+  });
+
+ });
+
+ activeCamera.position.x=Math.sin(time/5000)*.6;
+
+ activeCamera.lookAt(0,1,0);
+
+ activeRenderer.render(activeScene,activeCamera);
+
+}
+
+async function createVideo(){
+
+ if(!currentStory){
+
+  alert("Krijo fillimisht një histori!");
+
+  return;
+
+ }
+
+ if(!currentCharacters.length){
+
+  currentCharacters=getSelectedAnimals();
+
+ }
+
+ const button=document.getElementById("createVideoButton");
+
+ const status=document.getElementById("videoStatus");
+
+ const video=document.getElementById("videoPreview");
+
+ const download=document.getElementById("downloadVideo");
+
+ if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){
+
+  status.textContent="Ky shfletues nuk e mbështet regjistrimin e videos nga skena 3D. Provo një shfletues të përditësuar.";
+
+  return;
+
+ }
+
+ button.disabled=true;
+
+ video.style.display="none";
+
+ download.style.display="none";
+
+ status.textContent="🌟 Po përgatisim botën 3D dhe personazhet...";
+
+ let stream=null;
+
+ let recorder=null;
+
+ let chunks=[];
+
+ let melodyTimer=null;
+
+ try{
+
+  const renderer=build3D();
+
+  stream=renderer.domElement.captureStream(24);
+
+  const ctx=ensureAudio();
+
+  const destination=ctx.createMediaStreamDestination();
+
+  const gain=ctx.createGain();
+
+  gain.gain.value=.18;
+
+  gain.connect(destination);
+
+  const notes=[523.25,659.25,783.99,659.25,587.33,698.46,783.99,698.46];
+
+  let noteIndex=0;
+
+  melodyTimer=setInterval(()=>{
+
+   const osc=ctx.createOscillator();
+
+   const g=ctx.createGain();
+
+   osc.type="sine";
+
+   osc.frequency.value=notes[noteIndex++%notes.length];
+
+   g.gain.setValueAtTime(.0001,ctx.currentTime);
+
+   g.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.08);
+
+   g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.5);
+
+   osc.connect(g);
+
+   g.connect(gain);
+
+   osc.start();
+
+   osc.stop(ctx.currentTime+.52);
+
+  },560);
+
+  destination.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+
+  const types=[
+
+   "video/webm;codecs=vp9,opus",
+
+   "video/webm;codecs=vp8,opus",
+
+   "video/webm",
+
+   "video/mp4"
+
+  ];
+
+  const mime=types.find(t=>MediaRecorder.isTypeSupported(t))||"";
+
+  recorder=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:2500000}:undefined);
+
+  recorder.ondataavailable=e=>{
+
+   if(e.data&&e.data.size)chunks.push(e.data);
+
+  };
+
+  const duration=Number(document.getElementById("videoDuration").value)*60*1000;
+
+  const started=performance.now();
+
+  await new Promise((resolve,reject)=>{
+
+   recorder.onerror=()=>reject(new Error("Regjistrimi i videos u ndërpre."));
+
+   recorder.onstop=resolve;
+
+   recorder.start(1000);
+
+   const animate=(now)=>{
+
+    draw3DFrame(now-started);
+
+    const elapsed=now-started;
+
+    status.textContent="🎬 Filmi 3D po krijohet... "+Math.min(100,Math.floor(elapsed/duration*100))+"%";
+
+    if(elapsed>=duration){
+
+     if(recorder.state!=="inactive")recorder.stop();
+
+     return;
+
+    }
+
+    animationFrame=requestAnimationFrame(animate);
+
+   };
+
+   animationFrame=requestAnimationFrame(animate);
+
+  });
+
+  clearInterval(melodyTimer);
+
+  const blob=new Blob(chunks,{type:recorder.mimeType||"video/webm"});
+
+  if(!blob.size){
+
+   throw new Error("Videoja doli bosh. Provo përsëri.");
+
+  }
+
+  const url=URL.createObjectURL(blob);
+
+  video.src=url;
+
+  video.style.display="block";
+
+  video.load();
+
+  download.href=url;
+
+  download.download=(recorder.mimeType||"").includes("mp4")?"magic-friends-3d.mp4":"magic-friends-3d.webm";
+
+  download.style.display="inline-block";
+
+  status.textContent="🎉 Filmi yt 3D u krijua! Shtyp luaj ose shkarko filmin.";
+
+ }catch(err){
+
+  status.textContent="Nuk u krijua videoja: "+err.message;
+
+  console.error(err);
+
+ }finally{
+
+  if(melodyTimer)clearInterval(melodyTimer);
+
+  if(animationFrame)cancelAnimationFrame(animationFrame);
+
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+
+  button.disabled=false;
+
+ }
+
+}
+
+</script>
+
+</body>
+
+</html>
