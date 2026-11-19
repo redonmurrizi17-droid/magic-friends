@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 
 <html lang="sq">
@@ -50,8 +52,6 @@ main{max-width:650px;margin:auto;padding:15px}
 
 }
 
-.characters{font-size:55px}
-
 button{
 
  background:#ffcf65;
@@ -92,53 +92,123 @@ input,select{
 
 }
 
-.animal-option{
+/* Katër fotografitë në një rresht */
 
- background:#ffffff16;
+.photo-grid{
 
- border-radius:14px;
+ display:grid;
 
- padding:10px;
+ grid-template-columns:repeat(4,minmax(0,1fr));
 
- margin:9px 0;
+ gap:9px;
+
+ width:100%;
+
+ margin:14px auto 20px
+
+}
+
+.photo-slot{
+
+ min-width:0;
+
+ text-align:center
+
+}
+
+.photo-upload{
 
  display:flex;
 
+ flex-direction:column;
+
  align-items:center;
 
- justify-content:space-between;
+ justify-content:center;
 
- gap:5px
+ width:100%;
 
-}
+ aspect-ratio:1/1;
 
-.animal-option label{
+ border:1px dashed #d6e8ff99;
 
- font-size:17px;
+ border-radius:12px;
 
- text-align:left;
+ background:#ffffff16;
 
- flex:1
+ overflow:hidden;
 
-}
+ cursor:pointer;
 
-.animal-option input[type=checkbox]{
-
- width:23px;
-
- height:23px;
-
- margin:5px
+ position:relative
 
 }
 
-.animal-option input[type=text]{
+.photo-upload span{
 
- width:48%;
+ font-size:25px;
 
- margin:3px;
+ color:#ffe28a
 
- padding:10px
+}
+
+.photo-upload small{
+
+ font-size:10px;
+
+ color:#d6e8ff;
+
+ margin-top:4px
+
+}
+
+.photo-upload input{display:none}
+
+.photo-upload img{
+
+ width:100%;
+
+ height:100%;
+
+ object-fit:cover;
+
+ display:none;
+
+ position:absolute;
+
+ inset:0;
+
+ margin:0;
+
+ padding:0;
+
+ border-radius:11px
+
+}
+
+.photo-name{
+
+ width:100%;
+
+ min-width:0;
+
+ padding:9px 3px;
+
+ margin:7px 0 0;
+
+ font-size:13px;
+
+ text-align:center
+
+}
+
+@media(max-width:380px){
+
+ .photo-grid{gap:6px}
+
+ .photo-name{font-size:11px;padding:8px 2px}
+
+ .card{padding:14px}
 
 }
 
@@ -334,8 +404,6 @@ small{color:#d6e8ff}
 
 <p>Bota magjike e aventurave!</p>
 
-<div class="characters">🐻 🦊 🐰 🐼</div>
-
 </header>
 
 <main>
@@ -362,37 +430,81 @@ small{color:#d6e8ff}
 
 </select>
 
-<h3>🐾 Zgjidh personazhet dhe emrat</h3>
+<h3>🐾 Zgjidh fotografitë dhe emrat</h3>
 
-<div class="animal-option">
+<div class="photo-grid">
 
-<label><input type="checkbox" class="animal-check" value="bear" checked> 🐻 Ariu</label>
+ <div class="photo-slot">
 
-<input id="bearName" value="Beni" placeholder="Emri">
+  <label class="photo-upload" for="bearPhoto">
 
-</div>
+   <span id="bearPlus">＋</span>
 
-<div class="animal-option">
+   <small id="bearHint">Vendos foton</small>
 
-<label><input type="checkbox" class="animal-check" value="fox" checked> 🦊 Dhelpra</label>
+   <img id="bearPhotoPreview" alt="Fotografia 1">
 
-<input id="foxName" value="Foksi" placeholder="Emri">
+   <input type="file" id="bearPhoto" accept="image/*" onchange="loadAnimalPhoto(this,'bear')">
 
-</div>
+  </label>
 
-<div class="animal-option">
+  <input class="photo-name" id="bearName" placeholder="Emri">
 
-<label><input type="checkbox" class="animal-check" value="rabbit" checked> 🐰 Lepuri</label>
+ </div>
 
-<input id="rabbitName" value="Bubi" placeholder="Emri">
+ <div class="photo-slot">
 
-</div>
+  <label class="photo-upload" for="foxPhoto">
 
-<div class="animal-option">
+   <span id="foxPlus">＋</span>
 
-<label><input type="checkbox" class="animal-check" value="panda" checked> 🐼 Panda</label>
+   <small id="foxHint">Vendos foton</small>
 
-<input id="pandaName" value="Pandi" placeholder="Emri">
+   <img id="foxPhotoPreview" alt="Fotografia 2">
+
+   <input type="file" id="foxPhoto" accept="image/*" onchange="loadAnimalPhoto(this,'fox')">
+
+  </label>
+
+  <input class="photo-name" id="foxName" placeholder="Emri">
+
+ </div>
+
+ <div class="photo-slot">
+
+  <label class="photo-upload" for="rabbitPhoto">
+
+   <span id="rabbitPlus">＋</span>
+
+   <small id="rabbitHint">Vendos foton</small>
+
+   <img id="rabbitPhotoPreview" alt="Fotografia 3">
+
+   <input type="file" id="rabbitPhoto" accept="image/*" onchange="loadAnimalPhoto(this,'rabbit')">
+
+  </label>
+
+  <input class="photo-name" id="rabbitName" placeholder="Emri">
+
+ </div>
+
+ <div class="photo-slot">
+
+  <label class="photo-upload" for="pandaPhoto">
+
+   <span id="pandaPlus">＋</span>
+
+   <small id="pandaHint">Vendos foton</small>
+
+   <img id="pandaPhotoPreview" alt="Fotografia 4">
+
+   <input type="file" id="pandaPhoto" accept="image/*" onchange="loadAnimalPhoto(this,'panda')">
+
+  </label>
+
+  <input class="photo-name" id="pandaName" placeholder="Emri">
+
+ </div>
 
 </div>
 
@@ -498,6 +610,18 @@ let currentCharacters=[];
 
 let customCharacters=[];
 
+let animalPhotos={
+
+ bear:null,
+
+ fox:null,
+
+ rabbit:null,
+
+ panda:null
+
+};
+
 let audioContext=null;
 
 let musicGain=null;
@@ -516,33 +640,69 @@ let animationFrame=null;
 
 const animalData={
 
- bear:{emoji:"🐻",input:"bearName"},
+ bear:{input:"bearName",preview:"bearPhotoPreview"},
 
- fox:{emoji:"🦊",input:"foxName"},
+ fox:{input:"foxName",preview:"foxPhotoPreview"},
 
- rabbit:{emoji:"🐰",input:"rabbitName"},
+ rabbit:{input:"rabbitName",preview:"rabbitPhotoPreview"},
 
- panda:{emoji:"🐼",input:"pandaName"}
+ panda:{input:"pandaName",preview:"pandaPhotoPreview"}
 
 };
 
+function loadAnimalPhoto(input,id){
+
+ const file=input.files[0];
+
+ if(!file)return;
+
+ if(!file.type.startsWith("image/")){
+
+  alert("Zgjidh një fotografi të vlefshme!");
+
+  input.value="";
+
+  return;
+
+ }
+
+ const reader=new FileReader();
+
+ reader.onload=function(event){
+
+  animalPhotos[id]=event.target.result;
+
+  document.getElementById(animalData[id].preview).src=event.target.result;
+
+  document.getElementById(animalData[id].preview).style.display="block";
+
+  document.getElementById(id+"Plus").style.display="none";
+
+  document.getElementById(id+"Hint").style.display="none";
+
+ };
+
+ reader.readAsDataURL(file);
+
+}
+
 function getSelectedAnimals(){
 
- const standard=[...document.querySelectorAll(".animal-check:checked")].map(check=>{
+ const standard=Object.keys(animalData)
 
-  const a=animalData[check.value];
+ .filter(id=>animalPhotos[id])
 
-  return {
+ .map(id=>({
 
-   id:check.value,
+  id:"custom",
 
-   emoji:a.emoji,
+  emoji:"📷",
 
-   name:document.getElementById(a.input).value.trim()||"Miku"
+  name:document.getElementById(animalData[id].input).value.trim()||"Miku",
 
-  };
+  image:animalPhotos[id]
 
- });
+ }));
 
  return standard.concat(customCharacters);
 
@@ -668,7 +828,7 @@ function createStory(){
 
  if(!currentCharacters.length){
 
-  alert("Zgjidh të paktën një personazh!");
+  alert("Vendos të paktën një fotografi ose shto një personazh!");
 
   return;
 
@@ -847,134 +1007,6 @@ function sphere(parent,x,y,z,sx,sy,sz,material){
  return m;
 
 }
-
-function limb(parent,x,y,z,radius,length,material){
-
- const m=new THREE.Mesh(
-
-  new THREE.CylinderGeometry(radius,radius,length,12),
-
-  material
-
- );
-
- m.position.set(x,y,z);
-
- parent.add(m);
-
- return m;
-
-}
-
-function makeAnimal(id){
-
- const root=new THREE.Group();
-
- const parts={};
-
- const colors={
-
-  bear:0x9b633d,
-
-  fox:0xd96b27,
-
-  rabbit:0xe9e3dc,
-
-  panda:0xf1f1f1
-
- };
-
- const dark=mat(id==="panda"?0x171717:(id==="fox"?0x9d3d1d:0x593a2b));
-
- const fur=mat(colors[id]);
-
- const cream=mat(id==="bear"?0xd8b58e:(id==="fox"?0xffdfb2:0xffffff));
-
- sphere(root,0,.88,0,.48,.58,.34,fur);
-
- sphere(root,0,1.62,0,.43,.42,.38,fur);
-
- sphere(root,0,1.47,.31,.27,.19,.16,cream);
-
- sphere(root,0,1.49,.45,.07,.055,.045,dark);
-
- for(const side of [-1,1]){
-
-  if(id==="rabbit"){
-
-   const ear=sphere(root,side*.2,2.18,0,.12,.38,.11,fur);
-
-   ear.rotation.z=side*-.12;
-
-   parts["ear"+side]=ear;
-
-   sphere(root,side*.2,2.18,.085,.055,.27,.035,cream);
-
-  }else{
-
-   sphere(root,side*.29,1.94,0,.14,.15,.12,fur);
-
-   if(id==="fox"){
-
-    sphere(root,side*.29,2.02,.005,.075,.07,.07,dark);
-
-   }
-
-  }
-
-  sphere(root,side*.16,1.68,.32,.105,.13,.055,id==="panda"?dark:cream);
-
-  sphere(root,side*.16,1.69,.37,.045,.06,.025,mat(0x171717));
-
-  const arm=limb(root,side*.48,1.05,0,.12,.55,fur);
-
-  arm.rotation.z=side*.28;
-
-  parts["arm"+side]=arm;
-
-  const leg=limb(root,side*.23,.35,0,.15,.5,dark);
-
-  parts["leg"+side]=leg;
-
- }
-
- if(id==="fox"){
-
-  const tail=sphere(root,0,.8,-.48,.2,.2,.52,fur);
-
-  tail.rotation.x=-.25;
-
-  sphere(root,0,.88,-.92,.18,.18,.18,cream);
-
- }
-
- if(id==="bear"){
-
-  sphere(root,-.29,1.95,0,.16,.16,.14,fur);
-
-  sphere(root,.29,1.95,0,.16,.16,.14,fur);
-
- }
-
- if(id==="panda"){
-
-  sphere(root,-.29,1.94,.08,.16,.17,.11,dark);
-
-  sphere(root,.29,1.94,.08,.16,.17,.11,dark);
-
- }
-
- root.userData.parts=parts;
-
- root.userData.kind=id;
-
- return root;
-
-}
-
-/* Personazhet me fotografi shfaqen si figura të animuara në skenën 3D.
-
-   Fotografia nuk shndërrohet vetvetiu në model të vërtetë 3D. */
 
 function makePhotoCharacter(imageData){
 
@@ -1210,7 +1242,7 @@ function build3D(){
 
  currentCharacters.forEach((ch,i)=>{
 
-  const animal=ch.image?makePhotoCharacter(ch.image):makeAnimal(ch.id);
+  const animal=makePhotoCharacter(ch.image);
 
   animal.position.x=(i-(currentCharacters.length-1)/2)*2.25;
 
@@ -1248,35 +1280,11 @@ function draw3DFrame(time){
 
   const t=time/1000+a.offset;
 
-  const p=a.group.userData.parts;
-
   a.group.position.x=(i-(activeActors.length-1)/2)*2.25+Math.sin(t*.7)*.45;
 
   a.group.position.y=Math.abs(Math.sin(t*3.2))*.34;
 
   a.group.rotation.y=Math.sin(t*.8)*.28;
-
-  Object.keys(p).forEach(k=>{
-
-   if(k.startsWith("arm")){
-
-    p[k].rotation.z=(k==="arm-1"?.28:-.28)+Math.sin(t*4+(k==="arm-1"?0:Math.PI))*.65;
-
-   }
-
-   if(k.startsWith("leg")){
-
-    p[k].rotation.x=Math.sin(t*4+(k==="leg-1"?0:Math.PI))*.55;
-
-   }
-
-   if(k.startsWith("ear")){
-
-    p[k].rotation.z=(k==="ear-1"?-.12:.12)+Math.sin(t*3)*.12;
-
-   }
-
-  });
 
  });
 
@@ -1301,6 +1309,14 @@ async function createVideo(){
  if(!currentCharacters.length){
 
   currentCharacters=getSelectedAnimals();
+
+ }
+
+ if(!currentCharacters.length){
+
+  alert("Vendos të paktën një fotografi ose shto një personazh!");
+
+  return;
 
  }
 
@@ -1476,7 +1492,7 @@ async function createVideo(){
 
   download.style.display="inline-block";
 
-  status.textContent="🎉 Filmi yt 3D u krijua! Shtyp luaj ose shkarko filmin.";
+  status.textContent="🎉 Filmi yt u krijua! Shtyp luaj ose shkarko filmin.";
 
  }catch(err){
 
